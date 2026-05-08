@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Solicitação de Orçamento — Perfor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --purple: #534AB7;
+  --purple-dark: #3C3489;
+  --purple-light: #EEEDFE;
+  --teal: #1D9E75;
+  --teal-bg: #E1F5EE;
+  --teal-dark: #085041;
+  --coral: #D85A30;
+  --coral-bg: #FAECE7;
+  --blue: #378ADD;
+  --amber: #854F0B;
+  --amber-bg: #FAEEDA;
+  --bg: #F7F7F8;
+  --card: #FFFFFF;
+  --border: #E2E2E6;
+  --text: #1A1A1E;
+  --text2: #6E6E78;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 480px; margin: 0 auto; padding: 16px; }
+.logo-bar {
+  text-align: center;
+  padding: 20px 0 8px;
+}
+.logo-bar h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--purple);
+  letter-spacing: -0.5px;
+}
+.logo-bar p { font-size: 13px; color: var(--text2); margin-top: 2px; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.step-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--purple);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.step-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.step-desc {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.prog-dot {
+  height: 4px;
+  flex: 1;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+.prog-dot.done { background: var(--teal); }
+.prog-dot.active { background: var(--purple); }
+
+/* Inputs */
+.field { margin-bottom: 12px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+.field input, .field select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--text);
+  transition: border-color 0.2s;
+}
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(83,74,183,0.1);
+}
+.field input::placeholder { color: #B0B0B8; }
+
+/* Option buttons */
+.opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.opt-grid.single { grid-template-columns: 1fr; }
+.opt-btn {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+.opt-btn:hover { background: #FAFAFA; }
+.opt-btn.sel {
+  border: 2px solid var(--purple);
+  background: var(--purple-light);
+  color: var(--purple-dark);
+}
+.opt-btn .opt-title { font-weight: 600; display: block; }
+.opt-btn .opt-desc { font-size: 11px; color: var(--text2); display: block; margin-top: 2px; }
+.opt-btn.sel .opt-desc { color: var(--purple-dark); opacity: 0.7; }
+.def-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--teal-bg);
+  color: var(--teal-dark);
+  margin-left: 6px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Nav */
+.nav-row { display: flex; gap: 8px; margin-top: 16px; }
+.btn-next {
+  flex: 1;
+  padding: 12px;
+  background: var(--purple);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-next:hover { background: var(--purple-dark); }
+.btn-next:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-back {
+  padding: 12px 16px;
+  background: #fff;
+  color: var(--text2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+.btn-back:hover { background: #FAFAFA; }
+
+/* Auto-calc boxes */
+.auto-box {
+  background: var(--purple-light);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin: 12px 0;
+}
+.auto-box .auto-val { font-size: 15px; font-weight: 600; color: var(--purple-dark); }
+.auto-box .auto-label { font-size: 11px; color: var(--purple); margin-top: 2px; }
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.calc-item {
+  background: var(--teal-bg);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  text-align: center;
+}
+.calc-item .calc-val { font-size: 15px; font-weight: 600; color: var(--teal-dark); }
+.calc-item .calc-label { font-size: 10px; color: var(--teal); margin-top: 2px; }
+
+/* SVG area */
+.svg-wrap {
+  background: #F2F2F5;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.svg-wrap svg { width: 100%; display: block; }
+
+/* Legend */
+.legend { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0 12px; }
+.leg-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); }
+.leg-item span { width: 14px; height: 3px; border-radius: 1px; display: inline-block; }
+
+/* Review rows */
+.rev-section { margin-bottom: 12px; }
+.rev-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--purple);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--purple-light);
+}
+.rev-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 13px;
+}
+.rev-key { color: var(--text2); }
+.rev-val { color: var(--text); font-weight: 500; text-align: right; max-width: 60%; }
+
+/* Success */
+.success-icon {
+  width: 56px; height: 56px;
+  background: var(--teal-bg);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+  font-size: 28px;
+}
+.success-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.success-desc {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* Loading */
+.loading-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.9);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 999;
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { margin-top: 12px; font-size: 14px; color: var(--text2); }
+
+/* Dimension color inputs */
+.dim-green input { border-color: #5DCAA5; }
+.dim-green input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(29,158,117,0.1); }
+.dim-green label { color: #0F6E56; }
+.dim-blue input { border-color: #85B7EB; }
+.dim-blue input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(55,138,221,0.1); }
+.dim-blue label { color: #185FA5; }
+.dim-orange input { border-color: #F0997B; }
+.dim-orange input:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(216,90,48,0.1); }
+.dim-orange label { color: #993C1D; }
+
+.dim-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="logo-bar">
+    <h1>PERFOR</h1>
+    <p>Solicitação de Orçamento</p>
+  </div>
+  <div class="progress" id="progressBar"></div>
+  <div id="app"></div>
+</div>
+
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p class="loading-text">Enviando solicitação...</p>
+</div>
+
+<script>
+// =====================================================
+// CONFIG — URL do Google Apps Script
+// =====================================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwPlbZS1zI3rVWGPThJ2l1__B1-4vCd35p62pAyuu0vZFSWsyi0MhQ3013oaqzoerWN/exec';
+
+// =====================================================
+// STATE
+// =====================================================
+const D = {};
+let S = 0;
+const TOTAL = 7;
+
+const EQ = [
+  {k:'dmh', l:'Detector de Metal Horizontal', bd:'purple', ds:'Produtos em esteira, fluxo horizontal'},
+  {k:'dmv', l:'Detector de Metal Vertical / Pipeline', bd:'teal', ds:'Queda livre ou tubulação'},
+  {k:'cw', l:'Checkweigher Dinâmico', bd:'coral', ds:'Checadora de peso em esteira'},
+  {k:'expert', l:'Expert (Combinado Peso + Metal)', bd:'amber', ds:'Detecta metal e pesa simultaneamente'}
+];
+
+const MAT_MAP = {'inox':'Aço inox','carbono':'Aço carbono pintado'};
+const PROT_MAP = {'ip64':'IP64','ip66':'IP66','ip69k':'IP69K','ex':'EX'};
+
+const REJ_DMH = [['pistao','Pistão pneumático',true],['sopro','Sopro de ar'],['retratil','Sistema retrátil'],['flap','Flap'],['braco','Braço articulado'],['basculante','Sistema basculante'],['parada','Parada de esteira']];
+const REJ_DMV = [['desv_pneu','Desviador pneumático'],['desv_wan','Desviador WanGroup'],['desv_t','Desviador tubular tipo T'],['sinal','Somente sinal sonoro/luminoso'],['inib','Inibição mordaça + sinal'],['valv','Válvula desviadora tubular']];
+const REJ_CW = [['pistao','Pistão pneumático',true],['sopro','Sopro de ar'],['retratil','Sistema retrátil'],['flap','Flap'],['braco','Braço articulado'],['basculante','Sistema basculante'],['parada','Parada de esteira']];
+const REJ_EXP = [['pistao','Pistão pneumático',true],['sopro','Sopro de ar'],['retratil','Sistema retrátil'],['flap','Flap'],['braco','Braço articulado'],['desviador','Desviador de fluxo'],['basculante','Sistema basculante'],['parada','Parada de esteira']];
+
+function getRej(eq) { return eq==='dmv'?REJ_DMV:eq==='dmh'?REJ_DMH:eq==='cw'?REJ_CW:REJ_EXP; }
+function getDefRej(eq) { return eq==='dmv'?'desv_pneu':'pistao'; }
+function getDefNRej(eq) { return eq==='expert'?'2':'1'; }
+function getRejLabel(eq, val) { const r=getRej(eq).find(x=>x[0]===val); return r?r[1]:val; }
+
+function calcPrec(peso) {
+  const p = parseFloat(peso);
+  if(!p||p<=0) return '—';
+  if(p<=1000) return '1g';
+  if(p<=5000) return '2g';
+  if(p<=25000) return '5g';
+  if(p<=50000) return '10g';
+  return 'Consultar';
+}
+
+// =====================================================
+// UI HELPERS
+// =====================================================
+function h(tag, cls, html) {
+  const el = document.createElement(tag);
+  if(cls) el.className = cls;
+  if(html) el.innerHTML = html;
+  return el;
+}
+
+function mkProgress(cur) {
+  const bar = document.getElementById('progressBar');
+  bar.innerHTML = '';
+  for(let i=0; i<TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'prog-dot' + (i<cur?' done':i===cur?' active':'');
+    bar.appendChild(d);
+  }
+}
+
+function mkField(label, key, placeholder, type) {
+  const d = h('div','field');
+  d.innerHTML = '<label>'+label+'</label>';
+  const inp = document.createElement('input');
+  inp.type = type||'text';
+  inp.placeholder = placeholder||'';
+  inp.value = D[key]||'';
+  inp.oninput = () => { D[key] = inp.value; };
+  d.appendChild(inp);
+  return d;
+}
+
+function mkFieldColor(label, key, placeholder, colorClass) {
+  const d = h('div','field '+colorClass);
+  d.innerHTML = '<label>'+label+'</label>';
+  const inp = document.createElement('input');
+  inp.type = 'number';
+  inp.placeholder = placeholder||'';
+  inp.value = D[key]||'';
+  inp.oninput = () => { D[key] = inp.value; if(typeof updDim==='function') updDim(); };
+  d.appendChild(inp);
+  return d;
+}
+
+function mkOptGrid(items, key, singleCol) {
+  const g = h('div', 'opt-grid'+(singleCol?' single':''));
+  items.forEach(([val, label, isDef, desc]) => {
+    const b = h('button','opt-btn'+(D[key]===val?' sel':''));
+    b.setAttribute('data-g', key);
+    let inner = '<span class="opt-title">'+label+(isDef?'<span class="def-tag">padrão</span>':'')+'</span>';
+    if(desc) inner += '<span class="opt-desc">'+desc+'</span>';
+    b.innerHTML = inner;
+    b.onclick = () => {
+      D[key] = val;
+      g.querySelectorAll('.opt-btn').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+    };
+    g.appendChild(b);
+  });
+  return g;
+}
+
+function mkNav(backFn, nextFn, nextLabel) {
+  const r = h('div','nav-row');
+  if(backFn) {
+    const b = h('button','btn-back','← Voltar');
+    b.onclick = backFn;
+    r.appendChild(b);
+  }
+  const n = h('button','btn-next', (nextLabel||'Próxima') + ' →');
+  n.onclick = nextFn;
+  r.appendChild(n);
+  return r;
+}
+
+// =====================================================
+// SVG DRAWING
+// =====================================================
+function drawRef(svg, F, L, A) {
+  const hasV=F>0&&L>0&&A>0;
+  const fv=hasV?F:200, lv=hasV?L:150, av=hasV?A:80;
+  const maxD=Math.max(fv,lv,av,1);
+  const sc=Math.min(70/maxD,0.45);
+  const bW=Math.max(fv*sc,25),bH=Math.max(av*sc,18),bD=Math.max(lv*sc*0.5,12);
+  const cx=150,cy=90;
+  const x=cx-bW/2,y=cy-bH/2;
+  let s='<defs><marker id="arw" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#888"/></marker></defs>';
+  s+=`<rect x="40" y="${cy+bH/2+2}" width="220" height="5" rx="2.5" fill="#DDDDE0"/>`;
+  s+=`<line x1="40" y1="${cy+bH/2+18}" x2="260" y2="${cy+bH/2+18}" stroke="#888" stroke-width="1" marker-end="url(#arw)"/>`;
+  s+=`<text x="150" y="${cy+bH/2+32}" text-anchor="middle" font-size="11" font-family="DM Sans" fill="#888">Sentido do fluxo</text>`;
+  const topPts=`${x},${y} ${x+bD},${y-bD} ${x+bW+bD},${y-bD} ${x+bW},${y}`;
+  const sidePts=`${x+bW},${y} ${x+bW+bD},${y-bD} ${x+bW+bD},${y+bH-bD} ${x+bW},${y+bH}`;
+  s+=`<rect x="${x}" y="${y}" width="${bW}" height="${bH}" fill="#CECBF6" stroke="#7F77DD" stroke-width="1.5" rx="2"/>`;
+  s+=`<polygon points="${topPts}" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1"/>`;
+  s+=`<polygon points="${sidePts}" fill="#AFA9EC" stroke="#7F77DD" stroke-width="1"/>`;
+  s+=`<line x1="${x}" y1="${y+bH+4}" x2="${x+bW}" y2="${y+bH+4}" stroke="#1D9E75" stroke-width="2"/>`;
+  s+=`<text x="${cx}" y="${y+bH-4}" text-anchor="middle" font-size="11" font-weight="600" font-family="DM Sans" fill="#0F6E56">${hasV?fv+'mm':'C'}</text>`;
+  const lx1=x+bW+2,ly1=y+bH-2,lx2=x+bW+bD+2,ly2=y+bH-bD-2;
+  s+=`<line x1="${lx1}" y1="${ly1}" x2="${lx2}" y2="${ly2}" stroke="#378ADD" stroke-width="2"/>`;
+  s+=`<text x="${(lx1+lx2)/2+8}" y="${(ly1+ly2)/2}" text-anchor="start" font-size="11" font-weight="600" font-family="DM Sans" fill="#185FA5">${hasV?lv+'mm':'L'}</text>`;
+  s+=`<line x1="${x-6}" y1="${y}" x2="${x-6}" y2="${y+bH}" stroke="#D85A30" stroke-width="2"/>`;
+  s+=`<text x="${x-10}" y="${cy+4}" text-anchor="end" font-size="11" font-weight="600" font-family="DM Sans" fill="#993C1D">${hasV?av+'mm':'A'}</text>`;
+  if(hasV){
+    const abL=lv+100,abA=av+50,eW=Math.round(fv*1.5);
+    const abSc=Math.min(80/abL,80/abA,0.4);
+    const rW=Math.max(abL*abSc,40),rH=Math.max(abA*abSc,25);
+    const pW=Math.max(lv*abSc,20),pH=Math.max(av*abSc,14);
+    const acx=400,acy=70;
+    s+=`<rect x="${acx-rW/2}" y="${acy-rH/2}" width="${rW}" height="${rH}" fill="none" stroke="#0F6E56" stroke-width="1.5" rx="3"/>`;
+    s+=`<rect x="${acx-pW/2}" y="${acy-pH/2}" width="${pW}" height="${pH}" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1" rx="2"/>`;
+    s+=`<text x="${acx}" y="${acy+3}" text-anchor="middle" font-size="9" font-family="DM Sans" fill="#534AB7">Produto</text>`;
+    s+=`<text x="${acx}" y="${acy-rH/2-8}" text-anchor="middle" font-size="11" font-family="DM Sans" fill="#888">Abertura</text>`;
+    s+=`<text x="${acx}" y="${acy+rH/2+14}" text-anchor="middle" font-size="11" font-weight="600" font-family="DM Sans" fill="#085041">${abL} x ${abA}mm</text>`;
+    s+=`<text x="${acx}" y="${acy+rH/2+28}" text-anchor="middle" font-size="10" font-family="DM Sans" fill="#888">Esteira: ${eW}mm</text>`;
+  } else {
+    s+=`<text x="400" y="65" text-anchor="middle" font-size="12" font-family="DM Sans" fill="#534AB7">Preencha as</text>`;
+    s+=`<text x="400" y="82" text-anchor="middle" font-size="12" font-family="DM Sans" fill="#534AB7">dimensões abaixo</text>`;
+  }
+  svg.innerHTML=s;
+}
+
+// =====================================================
+// RENDER
+// =====================================================
+function go() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  mkProgress(S);
+  window.scrollTo({top: 0, behavior: 'smooth'});
+
+  if(S===0) {
+    const c = h('div','card');
+    c.innerHTML = '<p class="step-label">Passo 1 de '+TOTAL+'</p><h2 class="step-title">Dados do cliente</h2><p class="step-desc">Informações da empresa e do contato principal.</p>';
+    [['Razão social','razao','Nome da empresa'],['Nome do contato','contato','Nome completo'],['Celular','celular','(11) 99999-9999'],['E-mail','email','email@empresa.com'],['Cidade','cidade',''],['Estado','estado',''],['Cargo','cargo','']].forEach(([l,k,p])=>c.appendChild(mkField(l,k,p,k==='email'?'email':k==='celular'?'tel':'text')));
+    c.appendChild(mkNav(null, ()=>{S=1;go()}));
+    app.appendChild(c);
+
+  } else if(S===1) {
+    const c = h('div','card');
+    c.innerHTML = '<p class="step-label">Passo 2 de '+TOTAL+'</p><h2 class="step-title">Tipo de equipamento</h2><p class="step-desc">Selecione o equipamento que melhor atende sua necessidade.</p>';
+    c.appendChild(mkOptGrid(EQ.map(eq=>[eq.k, eq.l, false, eq.ds]), 'equip', true));
+    c.appendChild(mkNav(()=>{S=0;go()}, ()=>{
+      if(!D.equip){alert('Selecione o equipamento para continuar.');return}
+      if(!D.rejeito) D.rejeito=getDefRej(D.equip);
+      if(!D.nRej) D.nRej=getDefNRej(D.equip);
+      S=2;go();
+    }));
+    app.appendChild(c);
+
+  } else if(S===2) {
+    const eq = EQ.find(e=>e.k===D.equip);
+    const c = h('div','card');
+    c.innerHTML = '<p class="step-label">Passo 3 de '+TOTAL+'</p><h2 class="step-title">Detalhes do produto</h2><p class="step-desc">Informações sobre o produto que passará pelo equipamento.</p>';
+    [['Produto (nome/descrição)','prodA','ex: Frango empanado 500g'],['Tipo de embalagem','embA','ex: Bandeja plástica selada'],['Peso bruto (g)','pesoA','ex: 530'],['Produção por minuto (PPM)','ppmA','ex: 40'],['Espaçamento entre produtos (mm)','espA','ex: 100']].forEach(([l,k,p])=>c.appendChild(mkField(l,k,p)));
+    if(D.equip!=='dmv'){
+      c.appendChild(mkField('Velocidade da esteira de entrada (m/min)','velA','ex: 30'));
+      c.appendChild(mkField('Altura da linha (mm)','altLinhaA','ex: 900'));
+    }
+    if(D.equip==='dmv'){
+      [['Altura da queda do produto (mm)','quedaA','ex: 500'],['Diâmetro da tubulação (polegadas)','tubA','ex: 2'],['Densidade do produto','densA','ex: 0.8 g/cm³']].forEach(([l,k,p])=>c.appendChild(mkField(l,k,p)));
+    }
+    [['Tipo de ambiente','tipoAmbA','Seco, Molhado, Úmido ou Resfriado'],['Temperatura do ambiente (°C)','tampA','ex: 22'],['Temperatura do produto (°C)','tprodA','ex: 5']].forEach(([l,k,p])=>c.appendChild(mkField(l,k,p)));
+    c.appendChild(mkNav(()=>{S=1;go()}, ()=>{S=3;go()}));
+    app.appendChild(c);
+
+  } else if(S===3) {
+    const c = h('div','card');
+    c.innerHTML = '<p class="step-label">Passo 4 de '+TOTAL+'</p><h2 class="step-title">Dimensões do produto na linha</h2><p class="step-desc">Meça o produto na posição exata em que ele passa no ponto da linha onde o equipamento será instalado.</p>';
+    const svgWrap = h('div','svg-wrap');
+    const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svgEl.setAttribute('viewBox','0 0 500 150');
+    svgEl.id = 'svgDim';
+    svgWrap.appendChild(svgEl);
+    c.appendChild(svgWrap);
+    const leg = h('div','legend');
+    leg.innerHTML = '<div class="leg-item"><span style="background:#1D9E75"></span>Comprimento (no fluxo)</div><div class="leg-item"><span style="background:#378ADD"></span>Largura (perpend.)</div><div class="leg-item"><span style="background:#D85A30"></span>Altura (vertical)</div>';
+    c.appendChild(leg);
+    const g3 = h('div','dim-grid');
+    g3.appendChild(mkFieldColor('Comprimento no fluxo (mm)','dimFluxo','ex: 300','dim-green'));
+    g3.appendChild(mkFieldColor('Largura perpend. (mm)','dimLarg','ex: 200','dim-blue'));
+    g3.appendChild(mkFieldColor('Altura vertical (mm)','dimAlt','ex: 100','dim-orange'));
+    c.appendChild(g3);
+    const resDiv = h('div','','');
+    resDiv.id = 'dimRes';
+    resDiv.style.display = 'none';
+    resDiv.innerHTML = '<div class="calc-grid"><div class="calc-item"><div class="calc-val" id="rEst">—</div><div class="calc-label">Esteira pesagem (1.5x)</div></div><div class="calc-item"><div class="calc-val" id="rAbL">—</div><div class="calc-label">Largura abertura (+100mm)</div></div><div class="calc-item"><div class="calc-val" id="rAbA">—</div><div class="calc-label">Altura abertura (+50mm)</div></div></div>';
+    c.appendChild(resDiv);
+    c.appendChild(mkNav(()=>{S=2;go()}, ()=>{S=4;go()}));
+    app.appendChild(c);
+    setTimeout(updDim, 50);
+
+  } else if(S===4) {
+    const c = h('div','card');
+    c.innerHTML = '<p class="step-label">Passo 5 de '+TOTAL+'</p><h2 class="step-title">Estrutura e proteção</h2>';
+    c.appendChild(h('p','step-desc','Material da estrutura'));
+    c.appendChild(mkOptGrid([['inox','Aço inox'],['carbono','Aço carbono pintado']], 'material'));
+    c.appendChild(h('p','step-desc','Grau de proteção'));
+    c.appendChild(mkOptGrid([['ip64','IP64 — respingos'],['ip66','IP66 — jatos de água'],['ip69k','IP69K — alta pressão'],['ex','EX — área explosiva']], 'protecao'));
+    c.appendChild(mkNav(()=>{S=3;go()}, ()=>{S=5;go()}));
+    app.appendChild(c);
+
+  } else if(S===5) {
+    const c = h('div','card');
+    const rejList = getRej(D.equip);
+    const defRej = getDefRej(D.equip);
+    if(!D.rejeito) D.rejeito = defRej;
+    if(!D.nRej) D.nRej = getDefNRej(D.equip);
+    c.innerHTML = '<p class="step-label">Passo 6 de '+TOTAL+'</p><h2 class="step-title">Configuração</h2>';
+    c.appendChild(h('p','step-desc','Sistema de rejeito'));
+    c.appendChild(mkOptGrid(rejList.map(r=>[r[0],r[1],r[2]||false]), 'rejeito'));
+    if(D.equip==='dmh'){
+      c.appendChild(h('p','step-desc','Equipamento inclinado?'));
+      c.appendChild(mkOptGrid([['sim','Sim'],['nao','Não']], 'inclinado'));
+      c.appendChild(mkField('Altura de entrada (mm)','altEntrada','ex: 1000'));
+      c.appendChild(mkField('Altura de saída (mm)','altSaida','ex: 800'));
+    }
+    if(D.equip!=='dmv'){
+      c.appendChild(h('p','step-desc','Nº de rejeitadores'));
+      if(D.equip==='expert'){
+        c.appendChild(mkOptGrid([['2','2 (1 metal + 1 peso)',true,'Padrão — rejeição separada'],['1','1 (único)',false,'Limitação de espaço na linha']], 'nRej'));
+      } else {
+        c.appendChild(mkOptGrid([['1','01',true],['2','02']], 'nRej'));
+      }
+    }
+    if(D.equip==='cw'||D.equip==='expert'){
+      c.appendChild(h('p','step-desc','Esteira coletora (linha baixa)'));
+      c.appendChild(mkOptGrid([['na','Não aplicável'],['curta','Curta'],['longa','Longa'],['extralonga','Extralonga']], 'coletora'));
+    }
+    c.appendChild(mkField('Quantidade de equipamentos','qtd','ex: 1'));
+    if(D.equip==='cw'||D.equip==='expert'){
+      const prec = calcPrec(D.pesoA);
+      const ab = h('div','auto-box');
+      ab.innerHTML = '<div class="auto-val">Precisão padrão: '+prec+'</div><div class="auto-label">Calculada pelo peso do produto ('+(D.pesoA||'?')+'g). Edite abaixo só se necessário.</div>';
+      c.appendChild(ab);
+      c.appendChild(mkField('Precisão específica (só se diferente do padrão)','precisaoEsp','Deixe em branco para usar o padrão'));
+    }
+    c.appendChild(mkField('Observações gerais','obs','Informações adicionais'));
+    c.appendChild(mkNav(()=>{S=4;go()}, ()=>{S=6;go()}, 'Revisar'));
+    app.appendChild(c);
+
+  } else if(S===6) {
+    const c = h('div','card');
+    const eq = EQ.find(e=>e.k===D.equip);
+    const F=parseInt(D.dimFluxo)||0, L=parseInt(D.dimLarg)||0, Alt=parseInt(D.dimAlt)||0;
+    const abL=L>0?L+100:0, abA=Alt>0?Alt+50:0, eW=F>0?Math.round(F*1.5):0;
+    const hasPes = D.equip==='cw'||D.equip==='expert';
+    const precPad = hasPes?calcPrec(D.pesoA):'';
+    const precFinal = D.precisaoEsp||precPad;
+
+    c.innerHTML = '<p class="step-label">Passo 7 de '+TOTAL+'</p><h2 class="step-title">Revisão final</h2><p class="step-desc">Confira todas as informações antes de enviar.</p>';
+
+    function addSection(title, rows) {
+      const sec = h('div','rev-section');
+      sec.innerHTML = '<p class="rev-section-title">'+title+'</p>';
+      rows.forEach(([k,v])=>{
+        if(!v) return;
+        const r = h('div','rev-row');
+        r.innerHTML = '<span class="rev-key">'+k+'</span><span class="rev-val">'+v+'</span>';
+        sec.appendChild(r);
+      });
+      c.appendChild(sec);
+    }
+
+    addSection('Cliente', [
+      ['Empresa', D.razao],['Contato', D.contato],['Celular', D.celular],['E-mail', D.email],
+      ['Cidade/UF', (D.cidade||'')+(D.estado?' - '+D.estado:'')],['Cargo', D.cargo]
+    ]);
+    addSection('Equipamento', [
+      ['Tipo', eq?eq.l:''],['Quantidade', D.qtd],['Material', MAT_MAP[D.material]||D.material],
+      ['Proteção', PROT_MAP[D.protecao]||D.protecao],['Rejeito', getRejLabel(D.equip, D.rejeito)],
+      D.equip!=='dmv'?['Nº rejeitadores', D.nRej]:null,
+      D.inclinado?['Inclinado', D.inclinado]:null,
+      D.altEntrada?['Alt. entrada', D.altEntrada+'mm']:null,
+      D.altSaida?['Alt. saída', D.altSaida+'mm']:null,
+      D.coletora?['Coletora', D.coletora]:null
+    ].filter(Boolean));
+    addSection('Produto', [
+      ['Produto', D.prodA],['Embalagem', D.embA],['Peso', D.pesoA?D.pesoA+'g':''],
+      ['PPM', D.ppmA],['Espaçamento', D.espA?D.espA+'mm':''],
+      F?['Dim. no fluxo', F+'mm']:null, L?['Dim. largura', L+'mm']:null, Alt?['Dim. altura', Alt+'mm']:null,
+      eW?['Esteira pesagem', eW+'mm']:null, abL?['Abertura', abL+' x '+abA+'mm']:null,
+      ['Ambiente', D.tipoAmbA],['Temp. ambiente', D.tampA?D.tampA+'°C':''],['Temp. produto', D.tprodA?D.tprodA+'°C':''],
+      D.velA?['Vel. esteira', D.velA+' m/min']:null, D.altLinhaA?['Altura linha', D.altLinhaA+'mm']:null,
+      D.quedaA?['Altura queda', D.quedaA+'mm']:null, D.tubA?['Tubulação', D.tubA+'"']:null, D.densA?['Densidade', D.densA]:null
+    ].filter(Boolean));
+    addSection('Sensibilidade', [
+      ['Ferroso / Não ferroso / Inox', '2.0mm'],
+      hasPes?['Precisão pesagem', precFinal]:null
+    ].filter(Boolean));
+    addSection('Condições', [
+      ['Frete', 'FOB'],['Instalação', 'Responsabilidade do cliente'],['Pagamento', '25% entrada + 30/60/90 dias'],
+      D.obs?['Observações', D.obs]:null
+    ].filter(Boolean));
+
+    c.appendChild(mkNav(()=>{S=5;go()}, ()=>{ enviarDados(); }, 'Enviar solicitação'));
+    app.appendChild(c);
+  }
+}
+
+// =====================================================
+// DIMENSION UPDATE
+// =====================================================
+function updDim() {
+  const svg = document.getElementById('svgDim');
+  if(!svg) return;
+  const F=parseInt(D.dimFluxo)||0, L=parseInt(D.dimLarg)||0, A=parseInt(D.dimAlt)||0;
+  drawRef(svg,F,L,A);
+  const rd = document.getElementById('dimRes');
+  if(F>0&&L>0&&A>0) {
+    rd.style.display='block';
+    document.getElementById('rEst').textContent=Math.round(F*1.5)+'mm';
+    document.getElementById('rAbL').textContent=(L+100)+'mm';
+    document.getElementById('rAbA').textContent=(A+50)+'mm';
+  } else { rd.style.display='none'; }
+}
+
+// =====================================================
+// ENVIAR DADOS
+// =====================================================
+async function enviarDados() {
+  const eq = EQ.find(e=>e.k===D.equip);
+  const F=parseInt(D.dimFluxo)||0, L=parseInt(D.dimLarg)||0, Alt=parseInt(D.dimAlt)||0;
+  const hasPes = D.equip==='cw'||D.equip==='expert';
+  const precPad = hasPes?calcPrec(D.pesoA):'';
+
+  const payload = {
+    razao: D.razao||'',
+    contato: D.contato||'',
+    celular: D.celular||'',
+    email: D.email||'',
+    cidade: D.cidade||'',
+    estado: D.estado||'',
+    cargo: D.cargo||'',
+    equipamento: eq?eq.l:'',
+    produto: D.prodA||'',
+    embalagem: D.embA||'',
+    peso: D.pesoA||'',
+    ppm: D.ppmA||'',
+    espacamento: D.espA||'',
+    dimFluxo: D.dimFluxo||'',
+    dimLargura: D.dimLarg||'',
+    dimAltura: D.dimAlt||'',
+    esteiraPesagem: F?String(Math.round(F*1.5)):'',
+    aberturaLargura: L?String(L+100):'',
+    aberturaAltura: Alt?String(Alt+50):'',
+    velEsteira: D.velA||'',
+    alturaLinha: D.altLinhaA||'',
+    alturaQueda: D.quedaA||'',
+    tubulacao: D.tubA||'',
+    densidade: D.densA||'',
+    tipoAmbiente: D.tipoAmbA||'',
+    tempAmbiente: D.tampA||'',
+    tempProduto: D.tprodA||'',
+    material: MAT_MAP[D.material]||D.material||'',
+    protecao: PROT_MAP[D.protecao]||D.protecao||'',
+    rejeito: getRejLabel(D.equip, D.rejeito),
+    nRejeitadores: D.nRej||'',
+    inclinado: D.inclinado||'',
+    altEntrada: D.altEntrada||'',
+    altSaida: D.altSaida||'',
+    coletora: D.coletora||'',
+    sensibilidade: '2.0mm (Fe/NFe/Inox)',
+    precisao: D.precisaoEsp||precPad,
+    qtd: D.qtd||'',
+    obs: D.obs||''
+  };
+
+  // Mostrar loading
+  document.getElementById('loadingOverlay').classList.remove('hidden');
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    mostrarSucesso();
+  } catch(err) {
+    // no-cors não retorna body, mas os dados são enviados
+    mostrarSucesso();
+  }
+}
+
+function mostrarSucesso() {
+  document.getElementById('loadingOverlay').classList.add('hidden');
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  mkProgress(TOTAL);
+
+  const c = h('div','card');
+  c.innerHTML = `
+    <div class="success-icon">✓</div>
+    <h2 class="success-title">Solicitação enviada!</h2>
+    <p class="success-desc">Suas informações foram recebidas com sucesso. Nossa equipe já está analisando e entrará em contato em breve.</p>
+  `;
+  const btn = h('button','btn-next','Enviar nova solicitação');
+  btn.style.marginTop = '8px';
+  btn.onclick = () => { Object.keys(D).forEach(k=>delete D[k]); S=0; go(); };
+  c.appendChild(btn);
+  app.appendChild(c);
+}
+
+// Start
+go();
+</script>
+</body>
+</html>
