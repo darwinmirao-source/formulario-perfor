@@ -495,7 +495,7 @@ function go() {
   if(S===0) {
     const c = h('div','card');
     c.innerHTML = '<p class="step-label">Passo 1 de '+TOTAL+'</p><h2 class="step-title">Dados do cliente</h2><p class="step-desc">Informações da empresa e do contato principal.</p>';
-    [['Razão social','razao','Nome da empresa'],['Nome do contato','contato','Nome completo'],['Celular','celular','(11) 99999-9999'],['E-mail','email','email@empresa.com'],['Cidade','cidade',''],['Estado','estado',''],['Cargo','cargo','']].forEach(([l,k,p])=>c.appendChild(mkField(l,k,p,k==='email'?'email':k==='celular'?'tel':'text')));
+    [['Razão social','razao','Nome da empresa'],['CNPJ','cnpj','00.000.000/0000-00'],['Nome do contato','contato','Nome completo'],['Celular','celular','(11) 99999-9999'],['E-mail','email','email@empresa.com'],['Cidade','cidade',''],['Estado','estado',''],['Cargo','cargo','']].forEach(([l,k,p])=>c.appendChild(mkField(l,k,p,k==='email'?'email':k==='celular'?'tel':'text')));
     c.appendChild(mkNav(null, ()=>{S=1;go()}));
     app.appendChild(c);
 
@@ -626,7 +626,7 @@ function go() {
     }
 
     addSection('Cliente', [
-      ['Empresa', D.razao],['Contato', D.contato],['Celular', D.celular],['E-mail', D.email],
+      ['Empresa', D.razao],['CNPJ', D.cnpj],['Contato', D.contato],['Celular', D.celular],['E-mail', D.email],
       ['Cidade/UF', (D.cidade||'')+(D.estado?' - '+D.estado:'')],['Cargo', D.cargo]
     ]);
     addSection('Equipamento', [
@@ -689,6 +689,7 @@ async function enviarDados() {
 
   const payload = {
     razao: D.razao||'',
+    cnpj: D.cnpj||'',
     contato: D.contato||'',
     celular: D.celular||'',
     email: D.email||'',
